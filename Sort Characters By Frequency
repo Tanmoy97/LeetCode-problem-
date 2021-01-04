@@ -1,0 +1,62 @@
+#451 Leet Code Problem:
+Given a string, sort it in decreasing order based on the frequency of characters.
+
+Example 1:
+
+Input:
+"tree"
+
+Output:
+"eert"
+
+Explanation:
+'e' appears twice while 'r' and 't' both appear once.
+So 'e' must appear before both 'r' and 't'. Therefore "eetr" is also a valid answer.
+Example 2:
+
+Input:
+"cccaaa"
+
+Output:
+"cccaaa"
+
+Explanation:
+Both 'c' and 'a' appear three times, so "aaaccc" is also a valid answer.
+Note that "cacaca" is incorrect, as the same characters must be together.
+Example 3:
+
+Input:
+"Aabb"
+
+Output:
+"bbAa"
+
+Explanation:
+"bbaA" is also a valid answer, but "Aabb" is incorrect.
+Note that 'A' and 'a' are treated as two different characters.
+
+
+
+Solution:
+class Solution {
+public:
+    string frequencySort(string s) {
+        map<char,int> mp;  //map to store frequency of characters
+        for(auto i:s)
+            mp[i]++;
+        vector<pair<int,char>> v;
+        for(auto i=mp.begin();i!=mp.end();i++)   
+            //cout<<i->second<<" "<<i->first<<"\n";
+          v.push_back(make_pair(i->second, i->first));  //v[0] ->frequency , v[1]->character
+        sort(v.rbegin(),v.rend());   //sort according to frequency decreasing order
+        s.clear();
+        for (int i = 0; i < v.size(); i++)
+	    { int k=v[i].first;   //store frequency of each characters
+         while(k--)
+		  s+=v[i].second;  //run the loop and add to string each char .
+	    }
+        
+        return s;
+        
+    }
+};
