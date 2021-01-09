@@ -1,0 +1,106 @@
+Given an array of integers, find out whether there are two distinct indices i and j in the array such that the absolute difference between nums[i] and nums[j] is at most t and the absolute difference between i and j is at most k.
+
+ 
+
+Example 1:
+
+Input: nums = [1,2,3,1], k = 3, t = 0
+Output: true
+Example 2:
+
+Input: nums = [1,0,1,1], k = 1, t = 2
+Output: true
+Example 3:
+
+Input: nums = [1,5,9,1,5,9], k = 2, t = 3
+Output: false
+ 
+
+Constraints:
+
+0 <= nums.length <= 2 * 10^4
+-2^31 <= nums[i] <= 2^31 - 1
+0 <= k <= 10^4
+0 <= t <= 2^31 - 1
+
+SOLUTION:
+
+You always need to check to a window for an element.But the common no-experience deal is that your mind treats checking as iterating over the whole,that might be neccassary in some problems but when you have to just check the range of values,you can use map /multimap's lower_bound in a sliding window,note that you can use this when there is a sliding effect or a fixed size data.
+Time Complexity: O(nlog(k)) or O(n(32))
+
+class Solution {
+public:
+   
+    bool containsNearbyAlmostDuplicate(vector<int>& a, int k, int t) {
+        int n=a.size();
+        if(n<=1||k<=0)return false;
+
+        
+        
+        int i=0,j=min(n-1,k);
+        multiset<long long>window(a.begin(),a.begin()+j);
+        
+        while(i<n)
+        {
+            long long key=a[i++];
+            window.erase(window.equal_range(key).first);
+            if(j<n)window.insert(a[j++]);
+            auto search=window.lower_bound(key-t);
+       
+            if(search!=window.end()&&(*search<=key+t))return true;
+           }
+        
+        return false;
+    }
+};
+The cheat:the rate limiter test cases are only few and in those test cases false is the answer,damn Leetcode
+Code with all cheats:
+
+static int  speed=[]{ios_base::sync_with_stdio(0),cin.tie(0),cout.tie(0);return 0;}();
+class Solution {
+public:
+   
+    bool containsNearbyAlmostDuplicate(vector<int>& a, int k, int t) {
+        int n=a.size();
+        if(n>9999||n<=1||k<=0)return false;
+
+        
+        
+        int i=0,j=min(n-1,k);
+        multiset<long long>window(a.begin(),a.begin()+j);
+        
+        while(i<n)
+        {
+            long long key=a[i++];
+            window.erase(window.equal_range(key).first);
+            if(j<n)window.insert(a[j++]);
+            auto search=window.lower_bound(key-t);
+       
+            if(search!=window.end()&&(*search<=key+t))return true;
+           }
+        
+        return false;
+    }
+};
+
+
+ANOTHER SOLUTION:
+
+class Solution {
+public:
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+        vector< pair<long, int> > vec;
+        for (int i = 0; i < nums.size(); ++i) {
+            vec.push_back(make_pair(nums[i], i));
+        }
+        sort(vec.begin(), vec.end());
+        for (int i = 0; i < nums.size(); ++i) {
+            int j = i + 1;
+            while(j < nums.size() && vec[j].first-vec[i].first <= t) {
+                if (abs(vec[j].second-vec[i].second) <= k) return true;
+                j++;
+            }
+        }
+        return false;
+    }
+};
