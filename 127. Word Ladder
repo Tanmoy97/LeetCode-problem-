@@ -1,0 +1,73 @@
+Given two words beginWord and endWord, and a dictionary wordList, return the length of the shortest transformation sequence from beginWord to endWord, such that:
+
+Only one letter can be changed at a time.
+Each transformed word must exist in the word list.
+Return 0 if there is no such transformation sequence.
+
+ 
+
+Example 1:
+
+Input: beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log","cog"]
+Output: 5
+Explanation: As one shortest transformation is "hit" -> "hot" -> "dot" -> "dog" -> "cog", return its length 5.
+Example 2:
+
+Input: beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log"]
+Output: 0
+Explanation: The endWord "cog" is not in wordList, therefore no possible transformation.
+ 
+
+Constraints:
+
+1 <= beginWord.length <= 100
+endWord.length == beginWord.length
+1 <= wordList.length <= 5000
+wordList[i].length == beginWord.length
+beginWord, endWord, and wordList[i] consist of lowercase English letters.
+beginWord != endWord
+All the strings in wordList are unique.
+
+Solution:
+
+class Solution {
+public:
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+         if(find(wordList.begin(),wordList.end(),endWord)==wordList.end())
+            return 0;
+        set<string> s;
+        for(auto i:wordList)
+            s.insert(i);
+        queue<string> q;
+        q.push(beginWord);
+        int d=0;
+        while(!q.empty())
+        {
+            d++;
+            int n=q.size();
+            while(n--)
+            {
+                string curr=q.front();
+                q.pop();
+                for(int i=0;i<curr.length();i++)
+                {
+                    string tmp=curr;
+                    for(char c='a';c<='z';c++)
+                    {
+                        tmp[i]=c;
+                        if(tmp==curr)
+                            continue;
+                        if(tmp==endWord)
+                            return d+1;
+                        if(s.find(tmp)!=s.end())
+                        {
+                            q.push(tmp);
+                            s.erase(tmp);
+                        }
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+};
