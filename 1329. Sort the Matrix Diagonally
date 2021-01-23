@@ -1,0 +1,98 @@
+A matrix diagonal is a diagonal line of cells starting from some cell in either the topmost row or leftmost column and going in the bottom-right direction until reaching the matrix's end. For example, the matrix diagonal starting from mat[2][0], where mat is a 6 x 3 matrix, includes cells mat[2][0], mat[3][1], and mat[4][2].
+
+Given an m x n matrix mat of integers, sort each matrix diagonal in ascending order and return the resulting matrix.
+
+ 
+
+Example 1:
+
+
+Input: mat = [[3,3,1,1],[2,2,1,2],[1,1,1,2]]
+Output: [[1,1,1,1],[1,2,2,2],[1,2,3,3]]
+ 
+
+Constraints:
+
+m == mat.length
+n == mat[i].length
+1 <= m, n <= 100
+1 <= mat[i][j] <= 100
+
+SOLUTION:
+
+Idea:
+
+Think about what will happen for example 1, which is 3-by-4 matrix. I piece together row and column index i and j as: ij
+
+   0  1  2  3
+0 00 01 02 03
+1 10 11 12 13
+2 20 21 22 23
+Then you can found i-j will be in the range of [-(n-1), m-1].
+Then you can split it into top-right and buttom-left triangular matrix.
+Now what? You will easily get Approach 2 solution?
+No way, it is not easy unless you get lots of practice.
+But you might easily get Approach 1.
+
+I use this to illustrate whenever you see concise coding here, which is the result careful thinking.
+It is okay to begin with raw but safe thinkging before you develop it into a more compact style.
+
+Approach 2: Elegant and compact coding
+
+class Solution {
+public:
+    vector<vector<int>> diagonalSort(vector<vector<int>>& mat) {
+        vector<vector<int>> ans(mat);        
+        const int m = mat.size(), n = mat[0].size();        
+        for(int d = -(n-1); d <= m - 1; d++){
+            vector<int> cur;
+            for(int i = max(0, d); i <= min(m-1, n-1+d); i++) cur.push_back(mat[i][i-d]);
+            sort(cur.begin(), cur.end());
+            for(int i = max(0, d), idx = 0; i <= min(m-1, n-1+d); i++) ans[i][i-d] = cur[idx++];
+        }        
+        
+        return ans;
+    }
+};
+Approach 1: Straightforward but lengthy coding
+
+class Solution {
+public:
+    vector<vector<int>> diagonalSort(vector<vector<int>>& mat) {
+        vector<vector<int>> ans(mat);        
+        const int m = mat.size(), n = mat[0].size();
+        // top right
+        for(int d = -(n-1); d <= 0; d++){
+            vector<int> cur;
+            for(int i = 0; i <= min(m-1, n-1+d); i++) cur.push_back(mat[i][i-d]);
+            sort(cur.begin(), cur.end());
+            for(int i = 0; i <= min(m-1, n-1+d); i++) ans[i][i-d] = cur[i];
+        }        
+        
+        //buttom left
+        for(int d = 1; d <= m - 1 ; d++){
+            vector<int> cur;
+            for(int i = d; i <= min(m-1, n-1+d); i++) cur.push_back(mat[i][i-d]);
+            sort(cur.begin(), cur.end());
+            for(int i = d,idx = 0; i <= min(m-1, n-1+d); i++) ans[i][i-d] = cur[idx++];
+        }
+        
+        return ans;
+    }
+};
+Approach 3:
+
+class Solution {
+public:
+    vector<vector<int>> diagonalSort(vector<vector<int>>& mat){
+        bool isSwapped;
+        for(int k = mat.size(); k--; ){
+             for(int i = 0; i < k; i++)
+                for(int j = 0; j + 1 < mat[i].size(); j++)
+                    if(mat[i][j] > mat[i + 1][j + 1])
+                        swap(mat[i][j], mat[i + 1][j + 1]), isSwapped=true;   
+            if(isSwapped==false) break;
+        }
+        return mat;
+    }
+};
